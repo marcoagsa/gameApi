@@ -8,7 +8,14 @@ const app = new Elysia()
   .use(swagger())
   .use(users)
   .use(scores)
-  .get("/", () => "🎮 Game API Running 🚀")
+  .get("/", ({ redirect }) => {
+    return redirect("/swagger");
+  })
+  .get("/health", () => ({ status: "ok", uptime: process.uptime() }))
+  .onError(({ code, error }) => {
+    console.error(`🔥 Error [${code}]:`, error);
+    return { error: "Internal Error." };
+  })
   .listen(3000);
-
-console.log("🚀 API is running on http://localhost:3000");
+console.log("🔥 server working on http://localhost:3000");
+console.log("📄 Swagger documentation on http://localhost:3000/swagger");

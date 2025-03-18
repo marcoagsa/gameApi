@@ -1,5 +1,4 @@
 import { t, Elysia } from "elysia";
-import db from "../db/database";
 
 export const scores = new Elysia({ prefix: "/scores" })
   // Salvar ou atualizar score
