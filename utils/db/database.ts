@@ -3,7 +3,7 @@ import { MongoClient, ServerApiVersion } from "mongodb";
 const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
-  throw new Error(`xupa misto`);
+  throw new Error(`❌ MongoDB URI is missing`);
 }
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
