@@ -1,4 +1,11 @@
+import { t } from "elysia";
 import type { ObjectId } from "mongodb";
+
+export const UserSchema = t.Object({
+  _id: t.String(),
+  email: t.String({ format: "email" }),
+  password: t.String(),
+});
 
 export interface User {
   _id: ObjectId;
@@ -6,4 +13,4 @@ export interface User {
   password: string;
 }
 
-export type Users = Array<User>;
+export type Users = Array<Users>;
