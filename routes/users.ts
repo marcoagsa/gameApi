@@ -1,7 +1,7 @@
-import { Elysia } from "elysia";
-import { connectDB } from "../utils/db/database";
-import type { User, Users } from "../models/users";
+import { Elysia, t } from "elysia";
+import { connectDB } from "@utils/db/database";
 import { ObjectId } from "mongodb";
+import type { User } from "@models/users";
 
 const db = await connectDB();
 const usersCollection = db.collection("users");
@@ -9,31 +9,199 @@ const usersCollection = db.collection("users");
 export const users = new Elysia({ prefix: "/users" })
 
   // Get all users
-  .get("", async () => {
-    return await usersCollection.find().toArray();
-  })
-  .onError(({ code, error, path }) => {
-    console.log(code, error, path);
-  })
+  .get(
+    "",
+    async ({ set: { status } }) => {
+      try {
+        const users = await usersCollection.find().toArray();
 
-  // Add user
-  .post("/create", async ({ body }) => {
-    const user = body as User;
-    const result = await usersCollection.insertOne(user);
-    return { message: "Usuário inserido!", user: result.insertedId };
-  })
-  .onError(({ code, error, path }) => {
-    console.log(code, error, path);
-  })
+        return users;
+      } catch (error) {
+        return { status, error: `🔥 Error: ${error}` };
+      }
+    },
+    {
+      detail: {
+        tags: ["Game Auth"],
+        summary: "Get all users",
+        description: "Endpoint to gel all users",
+        responses: {
+          200: {
+            description: "Successful response",
+            content: {
+              "application/json": {
+                schema: t.Array(
+                  t.Object({
+                    message: t.String(),
+                    result: t.String(),
+                  })
+                ),
+              },
+            },
+          },
+          400: {
+            description: "Bad Request",
+            content: {
+              "application/json": {
+                schema: t.Object({
+                  error: t.String(),
+                  status: t.String(),
+                }),
+              },
+            },
+          },
+        },
+      },
+    }
+  )
+
+  // sign user
+  .post(
+    "/sign",
+    async ({ body, set: { status } }) => {
+      try {
+        const user = body as User;
+        console.log(`MSA 🔊 user:`, user);
+
+        const result = await usersCollection.insertOne(user);
+
+        return { message: "Success", userId: result.insertedId };
+      } catch (error) {
+        return { status, error: `🔥 Error: ${error}` };
+      }
+    },
+    {
+      detail: {
+        tags: ["Game Auth"],
+        summary: "Sign user",
+        description: "Endpoint to sign user",
+        requestBody: {
+          content: {
+            "application/json": {
+              schema: t.Object({
+                email: t.String({ format: "email" }),
+                password: t.String({ minLength: 8 }),
+              }),
+            },
+          },
+        },
+        responses: {
+          200: {
+            description: "Successful response",
+            content: {
+              "application/json": {
+                schema: t.Object({
+                  message: t.String(),
+                  userId: t.String(),
+                }),
+              },
+            },
+          },
+          400: {
+            description: "Bad Request",
+            content: {
+              "application/json": {
+                schema: t.Object({
+                  error: t.String(),
+                  status: t.String(),
+                }),
+              },
+            },
+          },
+        },
+      },
+    }
+  )
 
   //Get user by _id
-  .get("/:id", async ({ params }) => {
-    const { id } = params;
-    console.log(`MSA 🔊 params:`, params);
-    const result = await usersCollection.findOne({ _id: new ObjectId(id) });
-    return { message: "", user: result };
-  })
-  .onError(({ code, error }) => {
-    console.error(`🔥 Error [${code}]:`, error);
-    return `🔥 Error [${code}]: ${error}`;
-  });
+  .get(
+    "/:id",
+    async ({ params: { id }, set: { status } }) => {
+      try {
+        const result = await usersCollection.findOne({
+          _id: new ObjectId(id),
+        });
+
+        return { message: "Success", result };
+      } catch (error) {
+        return { status, error: `🔥 Error: ${error}` };
+      }
+    },
+    {
+      detail: {
+        tags: ["Game Auth"],
+        summary: "Get user by _id",
+        description: "Endpoint to get user by _id",
+        responses: {
+          200: {
+            description: "Successful response",
+            content: {
+              "application/json": {
+                schema: t.Object({
+                  message: t.String(),
+                  result: t.String(),
+                }),
+              },
+            },
+          },
+          400: {
+            description: "Bad Request",
+            content: {
+              "application/json": {
+                schema: t.Object({
+                  error: t.String(),
+                  status: t.String(),
+                }),
+              },
+            },
+          },
+        },
+      },
+    }
+  )
+
+  .delete(
+    "/:id",
+    async ({ params: { id }, set: { status } }) => {
+      try {
+        const result = await usersCollection.findOneAndDelete({
+          _id: new ObjectId(id),
+        });
+
+        return { message: "User deleted", result };
+      } catch (error) {
+        return { status, error: `🔥 Error: ${error}` };
+      }
+    },
+    {
+      detail: {
+        tags: ["Game Auth"],
+        summary: "Delete user by _id",
+        description: "Endpoint to delete user by _id",
+        responses: {
+          200: {
+            description: "Successful response",
+            content: {
+              "application/json": {
+                schema: t.Object({
+                  message: t.String(),
+                  result: t.String(),
+                }),
+              },
+            },
+          },
+          400: {
+            description: "Bad Request",
+            content: {
+              "application/json": {
+                schema: t.Object({
+                  error: t.String(),
+                  status: t.String(),
+                }),
+              },
+            },
+          },
+        },
+      },
+    }
+  );
