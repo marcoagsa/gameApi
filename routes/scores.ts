@@ -1,39 +1,112 @@
 import { t, Elysia } from "elysia";
 
 export const scores = new Elysia({ prefix: "/scores" })
-  // Salvar ou atualizar score
-  .post(
-    "/save",
-    ({ body }) => {
-      // const { user_id, score, level } = body;
-      // const stmt = db.prepare(`
-      //       INSERT INTO scores (user_id, score, level)
-      //       VALUES (?, ?, ?)
-      //       ON CONFLICT(user_id) DO UPDATE SET score=?, level=?
-      //   `);
-      // stmt.run(user_id, score, level, score, level);
-      // return { success: true, message: "Score saved!" };
-    },
-    {
-      // body: t.Object({
-      //   user_id: t.String(),
-      //   score: t.Number(),
-      //   level: t.Number(),
-      // }),
-    }
-  )
 
-  // Obter score de um usuário
-  .get("/:user_id", ({ params }) => {
-    // const stmt = db.prepare("SELECT * FROM scores WHERE user_id = ?");
-    // const score = stmt.get(params.user_id);
-    // return score || { error: "Score not found" };
+  .post("/save", async ({ body }) => {}, {
+    detail: {
+      tags: ["Game Scores"],
+      summary: "Save score",
+      description: "Endpoint to save user score",
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: t.Object({
+              id: t.String(),
+              level: t.String(),
+              score: t.String(),
+            }),
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: "Successful response",
+          content: {
+            "application/json": {
+              schema: t.Object({
+                message: t.String(),
+                userId: t.String(),
+              }),
+            },
+          },
+        },
+        400: {
+          description: "Bad Request",
+          content: {
+            "application/json": {
+              schema: t.Object({
+                error: t.String(),
+                status: t.String(),
+              }),
+            },
+          },
+        },
+      },
+    },
   })
 
-  // Obter ranking dos melhores jogadores
-  .get("/leaderboard", () => {
-    // const stmt = db.prepare(
-    //   "SELECT users.username, scores.score, scores.level FROM scores JOIN users ON scores.user_id = users.id ORDER BY scores.score DESC LIMIT 10"
-    // );
-    // return stmt.all();
+  // Get Score by user id
+  .get("/:id", ({ params }) => {}, {
+    detail: {
+      tags: ["Game Scores"],
+      summary: "Get Score by user _id",
+      description: "Endpoint to get score by user _id",
+      responses: {
+        200: {
+          description: "Successful response",
+          content: {
+            "application/json": {
+              schema: t.Object({
+                message: t.String(),
+                result: t.String(),
+              }),
+            },
+          },
+        },
+        400: {
+          description: "Bad Request",
+          content: {
+            "application/json": {
+              schema: t.Object({
+                error: t.String(),
+                status: t.String(),
+              }),
+            },
+          },
+        },
+      },
+    },
+  })
+
+  // Get leaderboard
+  .get("/leaderboard", () => {}, {
+    detail: {
+      tags: ["Game Scores"],
+      summary: "Get leaderboard",
+      description: "Endpoint last 10 scores",
+      responses: {
+        200: {
+          description: "Successful response",
+          content: {
+            "application/json": {
+              schema: t.Object({
+                message: t.String(),
+                result: t.String(),
+              }),
+            },
+          },
+        },
+        400: {
+          description: "Bad Request",
+          content: {
+            "application/json": {
+              schema: t.Object({
+                error: t.String(),
+                status: t.String(),
+              }),
+            },
+          },
+        },
+      },
+    },
   });
