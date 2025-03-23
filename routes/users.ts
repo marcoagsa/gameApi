@@ -6,7 +6,7 @@ import type { User } from "@models/users";
 const db = await connectDB();
 const usersCollection = db.collection("users");
 
-export const users = new Elysia({ prefix: "/users" })
+export const users = new Elysia({ prefix: `${process.env.API_VERSION}/users` })
 
   // Get all users
   .get(
@@ -22,9 +22,9 @@ export const users = new Elysia({ prefix: "/users" })
     },
     {
       detail: {
-        tags: ["Game Auth"],
+        tags: ["Auth"],
         summary: "Get all users",
-        description: "Endpoint to gel all users",
+        description: "Endpoint to get all users",
         responses: {
           200: {
             description: "Successful response",
@@ -61,7 +61,6 @@ export const users = new Elysia({ prefix: "/users" })
     async ({ body, set: { status } }) => {
       try {
         const user = body as User;
-        console.log(`MSA 🔊 user:`, user);
 
         const result = await usersCollection.insertOne(user);
 
@@ -72,7 +71,7 @@ export const users = new Elysia({ prefix: "/users" })
     },
     {
       detail: {
-        tags: ["Game Auth"],
+        tags: ["Auth"],
         summary: "Sign user",
         description: "Endpoint to sign user",
         requestBody: {
@@ -113,7 +112,7 @@ export const users = new Elysia({ prefix: "/users" })
     }
   )
 
-  //Get user by _id
+  // Get user by _id
   .get(
     "/:id",
     async ({ params: { id }, set: { status } }) => {
@@ -129,7 +128,7 @@ export const users = new Elysia({ prefix: "/users" })
     },
     {
       detail: {
-        tags: ["Game Auth"],
+        tags: ["Auth"],
         summary: "Get user by _id",
         description: "Endpoint to get user by _id",
         responses: {
@@ -175,7 +174,7 @@ export const users = new Elysia({ prefix: "/users" })
     },
     {
       detail: {
-        tags: ["Game Auth"],
+        tags: ["Auth"],
         summary: "Delete user by _id",
         description: "Endpoint to delete user by _id",
         responses: {

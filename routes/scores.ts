@@ -1,10 +1,12 @@
 import { t, Elysia } from "elysia";
 
-export const scores = new Elysia({ prefix: "/scores" })
+export const scores = new Elysia({
+  prefix: `${process.env.API_VERSION}/scores`,
+})
 
   .post("/save", async ({ body }) => {}, {
     detail: {
-      tags: ["Game Scores"],
+      tags: ["Scores"],
       summary: "Save score",
       description: "Endpoint to save user score",
       requestBody: {
@@ -48,7 +50,7 @@ export const scores = new Elysia({ prefix: "/scores" })
   // Get Score by user id
   .get("/:id", ({ params }) => {}, {
     detail: {
-      tags: ["Game Scores"],
+      tags: ["Scores"],
       summary: "Get Score by user _id",
       description: "Endpoint to get score by user _id",
       responses: {
@@ -81,7 +83,7 @@ export const scores = new Elysia({ prefix: "/scores" })
   // Get leaderboard
   .get("/leaderboard", () => {}, {
     detail: {
-      tags: ["Game Scores"],
+      tags: ["Scores"],
       summary: "Get leaderboard",
       description: "Endpoint last 10 scores",
       responses: {
