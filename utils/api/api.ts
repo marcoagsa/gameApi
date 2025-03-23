@@ -6,13 +6,37 @@ export const api = new Elysia()
   .get(
     "",
     ({ redirect }) => {
-      return redirect(`/swagger`);
+      return redirect(`swagger/`);
     },
     {
       detail: {
         tags: ["API"],
         summary: "Swagger documentation",
-        description: "Endpoint to get swagger documentation",
+        description: "Endpoint to show swagger documentation",
+        responses: {
+          200: {
+            description: "Successful response",
+            content: {
+              "application/json": {
+                schema: t.Object({
+                  status: t.String(),
+                  uptime: t.String(),
+                }),
+              },
+            },
+          },
+          500: {
+            description: "Internal Server Error",
+            content: {
+              "application/json": {
+                schema: t.Object({
+                  error: t.String(),
+                  status: t.String(),
+                }),
+              },
+            },
+          },
+        },
       },
     }
   )

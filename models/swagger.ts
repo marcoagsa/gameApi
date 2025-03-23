@@ -5,6 +5,7 @@ export const swaggerConfig = swagger({
     info: {
       title: "Game API Documentation",
       version: "1.0.0",
+      description: "Endpoint to get swagger documentation",
     },
     tags: [
       { name: "API", description: "API" },
@@ -12,5 +13,4 @@ export const swaggerConfig = swagger({
       { name: "Scores", description: "Scores endpoints" },
     ],
   },
-  path: `/swagger`,
 });

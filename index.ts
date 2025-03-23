@@ -12,5 +12,5 @@ const app = new Elysia()
 
 console.log(`🔥 server working on http://localhost:${process.env.PORT}`);
 console.log(
-  `📄 Swagger documentation on http://localhost:${process.env.PORT}/${process.env.API_VERSION}/swagger`
+  `📄 Swagger documentation on http://localhost:${process.env.PORT}/swagger`
 );
