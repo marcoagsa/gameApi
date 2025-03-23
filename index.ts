@@ -2,7 +2,7 @@ import { Elysia, t } from "elysia";
 
 import { users } from "@routes/users";
 import { scores } from "@routes/scores";
-import { api } from "@utils/api/api";
+import { api } from "@routes/api";
 import { swaggerConfig } from "@models/swagger";
 
 const app = new Elysia()
@@ -10,7 +10,7 @@ const app = new Elysia()
   .group("", (app) => app.use(api).use(users).use(scores))
   .listen(Number(process.env.PORT) || 3000);
 
-console.log(`🔥 server working on http://localhost:${process.env.PORT}`);
+console.log(`🔥 server working on ${app.server?.hostname}:${app.server?.port}`);
 console.log(
-  `📄 Swagger documentation on http://localhost:${process.env.PORT}/swagger`
+  `📄 Swagger documentation on ${app.server?.hostname}:${app.server?.port}/swagger`
 );

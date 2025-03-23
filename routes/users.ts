@@ -1,7 +1,8 @@
 import { Elysia, t } from "elysia";
 import { connectDB } from "@utils/db/database";
 import { ObjectId } from "mongodb";
-import type { User } from "@models/users";
+import { UserSchema, type User } from "@models/users";
+import { generateSwaggerDocs } from "@models/swagger";
 
 const db = await connectDB();
 const usersCollection = db.collection("users");
@@ -21,37 +22,11 @@ export const users = new Elysia({ prefix: `${process.env.API_VERSION}/users` })
       }
     },
     {
-      detail: {
-        tags: ["Auth"],
-        summary: "Get all users",
-        description: "Endpoint to get all users",
-        responses: {
-          200: {
-            description: "Successful response",
-            content: {
-              "application/json": {
-                schema: t.Array(
-                  t.Object({
-                    message: t.String(),
-                    result: t.String(),
-                  })
-                ),
-              },
-            },
-          },
-          400: {
-            description: "Bad Request",
-            content: {
-              "application/json": {
-                schema: t.Object({
-                  error: t.String(),
-                  status: t.String(),
-                }),
-              },
-            },
-          },
-        },
-      },
+      detail: generateSwaggerDocs(
+        "Auth",
+        "Get all users",
+        "Endpoint to get all users"
+      ),
     }
   )
 
@@ -70,45 +45,12 @@ export const users = new Elysia({ prefix: `${process.env.API_VERSION}/users` })
       }
     },
     {
-      detail: {
-        tags: ["Auth"],
-        summary: "Sign user",
-        description: "Endpoint to sign user",
-        requestBody: {
-          content: {
-            "application/json": {
-              schema: t.Object({
-                email: t.String({ format: "email" }),
-                password: t.String({ minLength: 8 }),
-              }),
-            },
-          },
-        },
-        responses: {
-          200: {
-            description: "Successful response",
-            content: {
-              "application/json": {
-                schema: t.Object({
-                  message: t.String(),
-                  userId: t.String(),
-                }),
-              },
-            },
-          },
-          400: {
-            description: "Bad Request",
-            content: {
-              "application/json": {
-                schema: t.Object({
-                  error: t.String(),
-                  status: t.String(),
-                }),
-              },
-            },
-          },
-        },
-      },
+      detail: generateSwaggerDocs(
+        "Auth",
+        "Sign user",
+        "Endpoint to sign user",
+        UserSchema
+      ),
     }
   )
 
@@ -127,35 +69,11 @@ export const users = new Elysia({ prefix: `${process.env.API_VERSION}/users` })
       }
     },
     {
-      detail: {
-        tags: ["Auth"],
-        summary: "Get user by _id",
-        description: "Endpoint to get user by _id",
-        responses: {
-          200: {
-            description: "Successful response",
-            content: {
-              "application/json": {
-                schema: t.Object({
-                  message: t.String(),
-                  result: t.String(),
-                }),
-              },
-            },
-          },
-          400: {
-            description: "Bad Request",
-            content: {
-              "application/json": {
-                schema: t.Object({
-                  error: t.String(),
-                  status: t.String(),
-                }),
-              },
-            },
-          },
-        },
-      },
+      detail: generateSwaggerDocs(
+        "Auth",
+        "Get user by _id",
+        "Endpoint to get user by _id"
+      ),
     }
   )
 
@@ -173,34 +91,10 @@ export const users = new Elysia({ prefix: `${process.env.API_VERSION}/users` })
       }
     },
     {
-      detail: {
-        tags: ["Auth"],
-        summary: "Delete user by _id",
-        description: "Endpoint to delete user by _id",
-        responses: {
-          200: {
-            description: "Successful response",
-            content: {
-              "application/json": {
-                schema: t.Object({
-                  message: t.String(),
-                  result: t.String(),
-                }),
-              },
-            },
-          },
-          400: {
-            description: "Bad Request",
-            content: {
-              "application/json": {
-                schema: t.Object({
-                  error: t.String(),
-                  status: t.String(),
-                }),
-              },
-            },
-          },
-        },
-      },
+      detail: generateSwaggerDocs(
+        "Auth",
+        "Delete user by _id",
+        "Endpoint to delete user by _id"
+      ),
     }
   );
