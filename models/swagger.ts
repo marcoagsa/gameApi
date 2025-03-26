@@ -30,8 +30,10 @@ export const generateSwaggerDocs = (
   tag: string,
   summary: string,
   description: string,
-  requestSchema?: ReturnType<typeof t.Object>,
-  responseSuccessSchema?: ReturnType<typeof t.Object>
+  requestSchema?: any,
+  responseSuccessSchema?:
+    | ReturnType<typeof t.Object>
+    | ReturnType<typeof t.Array>
 ) => {
   return {
     tags: [tag],
@@ -72,3 +74,19 @@ export const generateSwaggerDocs = (
     },
   };
 };
+
+export function convertToSchema<T extends Record<string, any>>(
+  obj: T
+): Record<string, any> {
+  const schema: Record<string, any> = {};
+
+  for (const key in obj) {
+    if (typeof obj[key] === "object" && obj[key] !== null) {
+      schema[key] = obj[key].toString();
+    } else {
+      schema[key] = obj[key];
+    }
+  }
+
+  return schema;
+}
