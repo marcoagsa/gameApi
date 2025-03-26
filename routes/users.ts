@@ -1,7 +1,13 @@
 import { Elysia, t } from "elysia";
 import { connectDB } from "@utils/db/database";
 import { ObjectId } from "mongodb";
-import { UserSchema, type User } from "@models/users";
+import {
+  sigUpRequest,
+  singResponse,
+  UserArraySchema,
+  UserByIdResponse,
+  type User,
+} from "@models/users";
 import { generateSwaggerDocs } from "@models/swagger";
 
 const db = await connectDB();
@@ -25,7 +31,9 @@ export const users = new Elysia({ prefix: `${process.env.API_VERSION}/users` })
       detail: generateSwaggerDocs(
         "Auth",
         "Get all users",
-        "Endpoint to get all users"
+        "Endpoint to get all users",
+        undefined,
+        UserArraySchema
       ),
     }
   )
@@ -36,6 +44,8 @@ export const users = new Elysia({ prefix: `${process.env.API_VERSION}/users` })
     async ({ body, set: { status } }) => {
       try {
         const user = body as User;
+        user.active = true;
+        user.createDate = new Date();
 
         const result = await usersCollection.insertOne(user);
 
@@ -49,7 +59,8 @@ export const users = new Elysia({ prefix: `${process.env.API_VERSION}/users` })
         "Auth",
         "Sign user",
         "Endpoint to sign user",
-        UserSchema
+        sigUpRequest,
+        singResponse
       ),
     }
   )
@@ -72,7 +83,9 @@ export const users = new Elysia({ prefix: `${process.env.API_VERSION}/users` })
       detail: generateSwaggerDocs(
         "Auth",
         "Get user by _id",
-        "Endpoint to get user by _id"
+        "Endpoint to get user by _id",
+        undefined,
+        UserByIdResponse
       ),
     }
   )
@@ -94,7 +107,9 @@ export const users = new Elysia({ prefix: `${process.env.API_VERSION}/users` })
       detail: generateSwaggerDocs(
         "Auth",
         "Delete user by _id",
-        "Endpoint to delete user by _id"
+        "Endpoint to delete user by _id",
+        undefined,
+        UserByIdResponse
       ),
     }
   );
