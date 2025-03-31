@@ -1,5 +1,5 @@
-import { generateSwaggerDocs } from "@models/swagger";
 import { Elysia, t } from "elysia";
+import { generateSwaggerDocs } from "@models/swagger";
 import { apiHealthSchema } from "@models/api";
 
 export const api = new Elysia()
