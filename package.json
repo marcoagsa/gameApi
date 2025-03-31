@@ -7,13 +7,16 @@
     "dev": "bun --watch run index.ts "
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/bun": "latest"
   },
   "peerDependencies": {
     "typescript": "^5.8.2"
   },
   "dependencies": {
+    "@elysiajs/jwt": "^1.2.0",
     "@elysiajs/swagger": "^1.2.2",
+    "bcrypt": "^5.1.1",
     "elysia": "^1.2.25",
     "mongodb": "^6.15.0",
     "valibot": "^1.0.0"
