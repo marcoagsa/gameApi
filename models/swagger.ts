@@ -1,5 +1,5 @@
 import { t } from "elysia";
-import swagger from "@elysiajs/swagger";
+import { swagger } from "@elysiajs/swagger";
 
 export const swaggerConfig = swagger({
   documentation: {
