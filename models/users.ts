@@ -1,4 +1,4 @@
-import { t } from "elysia";
+import { Elysia, t } from "elysia";
 import {
   object,
   string,
@@ -6,19 +6,24 @@ import {
   regex,
   email as emailValidator,
   pipe,
+  partial,
 } from "valibot";
 import type { ObjectId } from "mongodb";
-
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}$/;
 
 export const UserSchema = object({
-  email: pipe(string(), emailValidator("Invalid email")),
+  email: pipe(string(), emailValidator("Please enter a valid email address")),
   password: pipe(
     string(),
-    minLength(8, "Min Length 8"),
-    regex(passwordRegex, "Minusculas e Maisculas e caracteres especiais")
+    minLength(8, "The password must be at least 8 characters long"),
+    regex(
+      passwordRegex,
+      "The password must contain lowercase, uppercase letters, and special characters"
+    )
   ),
 });
+
+export const PartialUserSchema = partial(UserSchema);
 
 export const sigUpRequest = t.Object({
   email: t.String(),
@@ -29,6 +34,8 @@ export const UserSchemaResponse = t.Object({
   _id: t.String(),
   email: t.String(),
   password: t.String(),
+  active: t.Boolean(),
+  createDate: t.Date(),
 });
 
 export const UserArraySchema = t.Array(UserSchemaResponse);
