@@ -1,84 +1,37 @@
-import { Elysia, t } from "elysia";
-import { connectDB } from "@utils/db/database";
-import { ObjectId } from "mongodb";
+import { Elysia } from "elysia";
+import { generateSwaggerDocs } from "@models/swagger";
 import {
+  PartialUserSchema,
   sigUpRequest,
   singResponse,
   UserArraySchema,
   UserByIdResponse,
-  type User,
 } from "@models/users";
-import { generateSwaggerDocs } from "@models/swagger";
-
-const db = await connectDB();
-const usersCollection = db.collection("users");
+import {
+  deleteUserById,
+  getAllUsers,
+  getUserById,
+  signInUser,
+  signUpUser,
+  updateUserPassword,
+  updateUserStatusById,
+} from "handlers/users";
 
 export const users = new Elysia({ prefix: `${process.env.API_VERSION}/users` })
 
-  // Get all users
-  .get(
-    "",
-    async ({ set: { status } }) => {
-      try {
-        const users = await usersCollection.find().toArray();
+  .get("", ({ set: { status } }) => getAllUsers(status ?? 500), {
+    detail: generateSwaggerDocs(
+      "Auth",
+      "Get all users",
+      "Endpoint to get all users",
+      undefined,
+      UserArraySchema
+    ),
+  })
 
-        return users;
-      } catch (error) {
-        return { status, error: `🔥 Error: ${error}` };
-      }
-    },
-    {
-      detail: generateSwaggerDocs(
-        "Auth",
-        "Get all users",
-        "Endpoint to get all users",
-        undefined,
-        UserArraySchema
-      ),
-    }
-  )
-
-  // sign user
-  .post(
-    "/sign",
-    async ({ body, set: { status } }) => {
-      try {
-        const user = body as User;
-        user.active = true;
-        user.createDate = new Date();
-
-        const result = await usersCollection.insertOne(user);
-
-        return { message: "Success", userId: result.insertedId };
-      } catch (error) {
-        return { status, error: `🔥 Error: ${error}` };
-      }
-    },
-    {
-      detail: generateSwaggerDocs(
-        "Auth",
-        "Sign user",
-        "Endpoint to sign user",
-        sigUpRequest,
-        singResponse
-      ),
-    }
-  )
-
-  // Get user by _id
   .get(
     "/:id",
-    async ({ params: { id }, set: { status } }) => {
-      try {
-        const result = await usersCollection.findOne({
-          _id: new ObjectId(id),
-        });
-
-        return { message: "Success", result };
-      } catch (error) {
-        return { status, error: `🔥 Error: ${error}` };
-      }
-    },
+    ({ params: { id }, set: { status } }) => getUserById(id, status ?? 500),
     {
       detail: generateSwaggerDocs(
         "Auth",
@@ -92,17 +45,7 @@ export const users = new Elysia({ prefix: `${process.env.API_VERSION}/users` })
 
   .delete(
     "/:id",
-    async ({ params: { id }, set: { status } }) => {
-      try {
-        const result = await usersCollection.findOneAndDelete({
-          _id: new ObjectId(id),
-        });
-
-        return { message: "User deleted", result };
-      } catch (error) {
-        return { status, error: `🔥 Error: ${error}` };
-      }
-    },
+    ({ params: { id }, set: { status } }) => deleteUserById(id, status ?? 500),
     {
       detail: generateSwaggerDocs(
         "Auth",
@@ -110,6 +53,64 @@ export const users = new Elysia({ prefix: `${process.env.API_VERSION}/users` })
         "Endpoint to delete user by _id",
         undefined,
         UserByIdResponse
+      ),
+    }
+  )
+
+  .patch(
+    "/:id/password",
+    ({ body, params: { id }, set: { status } }) =>
+      updateUserPassword(body, id, status ?? 500),
+    {
+      detail: generateSwaggerDocs(
+        "Auth",
+        "Update user password by _id",
+        "Endpoint to update user password by _id",
+        PartialUserSchema,
+        UserByIdResponse
+      ),
+    }
+  )
+
+  .patch(
+    "/:id/status",
+    ({ params: { id }, set: { status } }) =>
+      updateUserStatusById(id, status ?? 500),
+    {
+      detail: generateSwaggerDocs(
+        "Auth",
+        "Enable / Disable user by _id",
+        "Endpoint to update user by _id",
+        undefined,
+        UserByIdResponse
+      ),
+    }
+  )
+
+  .post(
+    "/signup",
+    ({ body, set: { status } }) => signUpUser(body, status ?? 500),
+    {
+      detail: generateSwaggerDocs(
+        "Auth",
+        "Sign-up user",
+        "Endpoint to sign-up user",
+        sigUpRequest,
+        singResponse
+      ),
+    }
+  )
+
+  .post(
+    "/signin",
+    ({ body, set: { status } }) => signInUser(body, status ?? 500),
+    {
+      detail: generateSwaggerDocs(
+        "Auth",
+        "Sign-in user",
+        "Endpoint to sign-in user",
+        sigUpRequest,
+        singResponse
       ),
     }
   );
