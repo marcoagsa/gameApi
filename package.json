@@ -4,7 +4,10 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun --watch run index.ts "
+    "dev": "bun --watch run index.ts ",
+    "start": "bun run index.ts",
+    "build": "bun build index.ts --outfile=dist/index.js --target=bun",
+    "prod": "NODE_ENV=production bun run dist/index.js"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
